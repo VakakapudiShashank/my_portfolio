@@ -19,7 +19,7 @@
                         // DYNAMIC CONTENT: Fetch hero social links
                         $sql = "SELECT * FROM social_links WHERE location = 'hero' ORDER BY id";
                         $result = $conn->query($sql);
-                        if ($result->num_rows > 0) {
+                        if ($result && $result->num_rows > 0) {
                             while($row = $result->fetch_assoc()) {
                                 echo '<a href="' . htmlspecialchars($row['url']) . '" class="social-icon" aria-label="' . htmlspecialchars($row['name']) . '" target="_blank"><i class="' . htmlspecialchars($row['icon_class']) . '"></i></a>';
                             }
@@ -60,7 +60,7 @@
             
             <div class="about-image">
                 <div class="about-image-container">
-                    <img src="BG.png" alt="Shashank Vakalapudi - professional photo">
+                    <img src="BG.png?t=<?php echo time(); ?>" alt="Shashank Vakalapudi - professional photo">
                 </div>
             </div>
         </section>
@@ -71,60 +71,77 @@
             <div class="skills-grid">
                 
                 <?php
-                    // DYNAMIC CONTENT: Fetch all skills and group them
+                    // DYNAMIC CONTENT: Fetch all skills and group them by category name
                     $all_skills = [];
-                    $skills_sql = "SELECT * FROM skills ORDER BY category_name, id";
+                    $skills_sql = "SELECT s.skill_name, s.icon_class, c.category_name 
+                                   FROM skills s 
+                                   JOIN skill_categories c ON s.category_id = c.id 
+                                   ORDER BY c.category_name, s.id";
+                    
                     $skills_result = $conn->query($skills_sql);
                     
-                    if ($skills_result->num_rows > 0) {
+                    if ($skills_result && $skills_result->num_rows > 0) {
                         while($skill = $skills_result->fetch_assoc()) {
-                            // Create an array grouped by category
                             $all_skills[$skill['category_name']][] = $skill;
                         }
                     }
 
-                    // Manually define your row layout
+                    // --- IMPORTANT ---
+                    // This array controls your layout. 
+                    // When you add a new category in the admin panel (e.g., "DevOps"),
+                    // you MUST add its name to this array for it to show up.
                     $skill_rows = [
                         'row-3' => ['Programming Languages', 'Frontend Development', 'Backend & Databases'],
                         'row-2' => ['Cybersecurity & IoT', 'Cloud & Developer Tools']
+                        // e.g., 'row-2' => ['Cybersecurity & IoT', 'Cloud & Developer Tools', 'DevOps']
                     ];
+                    // --- END OF IMPORTANT BLOCK ---
                 ?>
                 
                 <div class="skills-row-3">
                     <?php foreach ($skill_rows['row-3'] as $category): ?>
                         <div class="flip-card">
                             <div class="flip-card-inner">
-                                <div class="flip-card-front"><h3><?php echo $category; ?></h3></div>
+                                <div class="flip-card-front"><h3><?php echo htmlspecialchars($category); ?></h3></div>
                                 <div class="flip-card-back">
                                     <ul>
                                         <?php if(isset($all_skills[$category])): ?>
                                             <?php foreach($all_skills[$category] as $skill): ?>
                                                 <li><i class="<?php echo htmlspecialchars($skill['icon_class']); ?>"></i> <?php echo htmlspecialchars($skill['skill_name']); ?></li>
                                             <?php endforeach; ?>
+                                        <?php else: ?>
+                                            <li>Skills coming soon...</li>
                                         <?php endif; ?>
                                     </ul>
                                 </div>
                             </div>
                         </div>
                     <?php endforeach; ?>
-                </div> <div class="skills-row-2">
+                </div> 
+                <div class="skills-row-2">
                     <?php foreach ($skill_rows['row-2'] as $category): ?>
                         <div class="flip-card">
                             <div class="flip-card-inner">
-                                <div class="flip-card-front"><h3><?php echo $category; ?></h3></div>
+                                <div class="flip-card-front"><h3><?php echo htmlspecialchars($category); ?></h3></div>
                                 <div class="flip-card-back">
                                     <ul>
                                         <?php if(isset($all_skills[$category])): ?>
                                             <?php foreach($all_skills[$category] as $skill): ?>
                                                 <li><i class="<?php echo htmlspecialchars($skill['icon_class']); ?>"></i> <?php echo htmlspecialchars($skill['skill_name']); ?></li>
                                             <?php endforeach; ?>
+                                        <?php else: ?>
+                                            <li>Skills coming soon...</li>
                                         <?php endif; ?>
                                     </ul>
                                 </div>
                             </div>
                         </div>
                     <?php endforeach; ?>
-                </div> </div> </section> <section class="project-section" id="projects">
+                </div> 
+            </div> 
+        </section> 
+        
+        <section class="project-section" id="projects">
             <h2 class="section-title">projects.</h2>
             
             <div class="gallery">
@@ -135,7 +152,7 @@
                         $sql = "SELECT * FROM projects ORDER BY id";
                         $result = $conn->query($sql);
 
-                        if ($result->num_rows > 0) {
+                        if ($result && $result->num_rows > 0) {
                             while($row = $result->fetch_assoc()) {
                     ?>
                         <li>
@@ -149,7 +166,7 @@
                                         <a href="<?php echo htmlspecialchars($row['live_link']); ?>" target="_blank">Live Demo <i class="fas fa-external-link-alt"></i></a>
                                         <a href="<?php echo htmlspecialchars($row['github_link']); ?>" target="_blank">GitHub <i class="fab fa-github"></i></a>
                                     </div>
-                                </div>
+                                ins
                             </div>
                         </li>
                     <?php
@@ -181,7 +198,7 @@
                         // DYNAMIC CONTENT: Fetch contact social links
                         $sql = "SELECT * FROM social_links WHERE location = 'contact' ORDER BY id";
                         $result = $conn->query($sql);
-                        if ($result->num_rows > 0) {
+                        if ($result && $result->num_rows > 0) {
                             while($row = $result->fetch_assoc()) {
                                 echo '<a href="' . htmlspecialchars($row['url']) . '" class="contact-social-icon" aria-label="' . htmlspecialchars($row['name']) . '" target="_blank"><i class="' . htmlspecialchars($row['icon_class']) . '"></i></a>';
                             }

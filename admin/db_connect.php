@@ -1,4 +1,6 @@
 <?php
+session_start(); // <-- ADD THIS LINE
+
 /*
  * DATABASE CONNECTION
  * This file connects your site to the MySQL database.

@@ -1,10 +1,6 @@
 <?php
-// 1. Connect to the database
 include('db_connect.php');
-
-// 2. Fetch all projects from the database
-$sql = "SELECT * FROM projects ORDER BY id DESC";
-$result = $conn->query($sql);
+include('auth_check.php');
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -12,94 +8,57 @@ $result = $conn->query($sql);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
-    <style>
-        body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 20px; }
-        .container { width: 90%; margin: auto; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        h1, h2 { text-align: center; color: #333; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { padding: 12px; border: 1px solid #ddd; text-align: left; }
-        th { background-color: #f2f2f2; }
-        .actions a { text-decoration: none; padding: 5px 10px; border-radius: 4px; }
-        .edit { background-color: #ffc107; color: #333; }
-        .delete { background-color: #dc3545; color: white; }
-        form { margin-top: 30px; border-top: 2px solid #eee; padding-top: 20px; }
-        form div { margin-bottom: 15px; }
-        form label { display: block; margin-bottom: 5px; font-weight: bold; }
-        form input[type="text"], form textarea { width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
-        form button { background-color: #28a745; color: white; padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
     <div class="container">
-        <h1>Admin Dashboard</h1>
+        <div class="header">
+            <h1>Admin Dashboard</h1>
+            <div>
+                <a href="../index.php" target="_blank" class="view-site-btn">View Site</a>
+                <a href="logout.php" class="logout">Logout</a>
+            </div>
+        </div>
+        <p>Welcome, <strong><?php echo htmlspecialchars($_SESSION['admin_username']); ?></strong>!</p>
+        <p>From here you can manage all the content on your portfolio website.</p>
         
-        <h2>Manage Projects</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Title</th>
-                    <th>Description</th>
-                    <th>Image URL</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php
-                // 3. Loop through the results and display them in the table
-                if ($result->num_rows > 0) {
-                    while($row = $result->fetch_assoc()) {
-                        echo "<tr>";
-                        echo "<td>" . $row['id'] . "</td>";
-                        echo "<td>" . $row['title'] . "</td>";
-                        echo "<td>" . substr($row['description'], 0, 50) . "...</td>"; // Show a snippet
-                        echo "<td>" . $row['image_url'] . "</td>";
-                        echo "<td class='actions'>
-                                <a href='edit_project.php?id=" . $row['id'] . "' class='edit'>Edit</a>
-                                <a href='delete_project.php?id=" . $row['id'] . "' class='delete'>Delete</a>
-                              </td>";
-                        echo "</tr>";
-                    }
-                } else {
-                    echo "<tr><td colspan='5'>No projects found.</td></tr>";
-                }
-                ?>
-            </tbody>
-        </table>
+        <nav class="dashboard-nav">
+            <div class="nav-card">
+                <h2>Page Info</h2>
+                <p>Edit general info, bio, and upload your 'About Me' image.</p>
+                <a href="manage_info.php" class="btn">Manage Info</a>
+            </div>
+            
+            <div class="nav-card">
+                <h2>Projects</h2>
+                <p>Add, edit, or delete portfolio projects and upload images.</p>
+                <a href="manage_projects.php" class="btn">Manage Projects</a>
+            </div>
 
-        <form action="add_project.php" method="POST">
-            <h2>Add New Project</h2>
-            <div>
-                <label for="title">Title:</label>
-                <input type="text" id="title" name="title" required>
+            <div class="nav-card">
+                <h2>Skill Categories</h2>
+                <p>Add, edit, or delete skill categories (e.g., "Frontend").</p>
+                <a href="manage_categories.php" class="btn">Manage Categories</a>
             </div>
-            <div>
-                <label for="description">Description:</label>
-                <textarea id="description" name="description"></textarea>
+            
+            <div class="nav-card">
+                <h2>Skills</h2>
+                <p>Manage individual skills and assign them to categories.</p>
+                <a href="manage_skills.php" class="btn">Manage Skills</a>
             </div>
-            <div>
-                <label for="image_url">Image URL (e.g., 'project.png'):</label>
-                <input type="text" id="image_url" name="image_url">
+            
+            <div class="nav-card">
+                <h2>Social Links</h2>
+                <p>Add, edit, or delete social media, email, and other links.</p>
+                <a href="manage_socials.php" class="btn">Manage Socials</a>
             </div>
-            <div>
-                <label for="github_link">GitHub Link:</label>
-                <input type="text" id="github_link" name="github_link">
-            </div>
-            <div>
-                <label for="live_link">Live Demo Link:</label>
-                <input type="text" id="live_link" name="live_link">
-            </div>
-            <div>
-                <button type="submit">Add Project</button>
-            </div>
-        </form>
 
+            <div class="nav-card">
+                <h2>Manage Admins</h2>
+                <p>Add, edit, or delete admin user accounts.</p>
+                <a href="manage_admins.php" class="btn">Manage Admins</a>
+            </div>
+        </nav>
     </div>
-
 </body>
 </html>
-<?php
-// 5. Close the database connection
-$conn->close();
-?>
